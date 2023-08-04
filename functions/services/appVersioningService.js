@@ -37,4 +37,38 @@ const updateVersionData = async (buildType, version, buildNumber) => {
     await document.set(documentData);
 };
 
-module.exports = { getLatestBuildDetails, getUpdatedBuildDetails };
+/*
+Why not possible ?
+if there is a build which started in parallel,
+then its not possible to increment the build number as its already incremented
+*/
+const revokeBuildIfPossible = async (buildType, version, buildNumber) => {
+    const latestBuild = await getLatestBuildDetails(buildType, version);
+    let success = false;
+    if (latestBuild.build === buildNumber) {
+        updateVersionData(buildType, version, buildNumber - 1);
+        success = true;
+    }
+    return {
+        success: success,
+    };
+};
+
+/*
+Why Needed ?
+If there is a build triggered and its build number if not reported to here.
+Then the version DB might go out of track.
+*/
+const updateVersionDataIfNeeded = async (buildType, version, buildNumber) => {
+    const latestBuild = await getLatestBuildDetails(buildType, version);
+    let success = false;
+    if (latestBuild.build < buildNumber) {
+        updateVersionData(buildType, version, buildNumber);
+        success = true;
+    }
+    return {
+        success: success,
+    };
+};
+
+module.exports = { getLatestBuildDetails, getUpdatedBuildDetails, revokeBuildIfPossible, updateVersionDataIfNeeded };

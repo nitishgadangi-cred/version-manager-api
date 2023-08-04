@@ -1,6 +1,6 @@
 // eslint-disable-next-line new-cap
 const router = require("express").Router();
-const { getLatestVersion, updateVersion } = require("../controllers/appVersioningController");
+const { getLatestVersion, incrementVersion, updateVersionStatus } = require("../controllers/appVersioningController");
 const { isAuth } = require("../utils/authorisationHandler");
 
 // Health check
@@ -9,9 +9,12 @@ router.get("/", (req, res) => {
 });
 
 // latest version with build number
-router.get("/ios/latest/:build_type/:version?", isAuth, getLatestVersion);
+router.post("/ios/latest", isAuth, getLatestVersion);
 
 // incremented build number for a (latest if not)given version
-router.post("/ios/updated", isAuth, updateVersion);
+router.post("/ios/increment", isAuth, incrementVersion);
+
+// update the version db based on the build status
+router.post("/ios/update", isAuth, updateVersionStatus);
 
 module.exports = router;
