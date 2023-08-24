@@ -3,9 +3,9 @@ const VERSION_REGEX = /^\d+\.\d+\.\d+$/;
 
 const getBundleId = (buildType) => {
     if (buildType.toLowerCase() === constants.BUILD_TYPE_RELEASE) {
-        return process.env.CRED_BUNDLE_ID;
+        return constants.CRED_BUNDLE_ID;
     }
-    return process.env.CREDQA_BUNDLE_ID;
+    return constants.CREDQA_BUNDLE_ID;
 };
 
 const isValidVersion = (version) => VERSION_REGEX.test(version);
